@@ -5,6 +5,7 @@
 
 
 import { configure } from 'quasar/wrappers';
+import { QuasarResolver } from 'unplugin-vue-components/resolvers';
 
 
 export default configure((/* ctx */) => {
@@ -16,7 +17,7 @@ export default configure((/* ctx */) => {
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
     boot: [
-      
+
       'axios',
     ],
 
@@ -46,7 +47,7 @@ export default configure((/* ctx */) => {
         node: 'node20'
       },
 
-      vueRouterMode: 'hash', // available values: 'hash', 'history'
+      vueRouterMode: 'history', // available values: 'hash', 'history'
       // vueRouterBase,
       // vueDevtools,
       // vueOptionsAPI: false,
@@ -73,14 +74,26 @@ export default configure((/* ctx */) => {
           eslint: {
             lintCommand: 'eslint "./**/*.{js,ts,mjs,cjs,vue}"'
           }
-        }, { server: false }]
+        }, { server: false }],
+        ['unplugin-vue-router/vite'],
+        ['vite-plugin-vue-layouts', { defaultLayout: 'default' }],
+        ['unplugin-vue-components/vite',{
+          resolvers: [QuasarResolver()],
+          dts: 'src/components.d.ts', // Path to the generated TypeScript declarations
+          include: [/\.vue$/, /\.vue\?vue/, /\.md$/],
+        }],
+        ['unplugin-auto-import/vite', {
+          imports: ['vue', 'vue-router'],
+          dts: 'src/auto-imports.d.ts', // Path to the generated TypeScript declarations
+        }],
+
       ]
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
       // https: true
-      open: true // opens browser window automatically
+      open: false // opens browser window automatically
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
