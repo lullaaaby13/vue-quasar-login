@@ -12,6 +12,7 @@ const title = ref('About Page');
 
 </script>
 
-<style scoped>
-
-</style>
+<route lang="yaml">
+meta:
+  requiresAuth: true
+</route>

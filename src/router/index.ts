@@ -1,8 +1,15 @@
 import { route } from 'quasar/wrappers';
 
-import { createMemoryHistory, createRouter, createWebHashHistory, createWebHistory } from 'vue-router';
+import {
+  createMemoryHistory,
+  createRouter,
+  createWebHashHistory,
+  createWebHistory,
+  NavigationGuardNext
+} from 'vue-router';
 import { routes } from 'vue-router/auto-routes';
 import { setupLayouts } from 'virtual:generated-layouts';
+import { useAuthStore } from 'stores/auth.store.ts';
 
 /*
  * If not building with SSR mode, you can
@@ -21,6 +28,8 @@ const extendedRoutes = setupLayouts(routes);
 // });
 
 
+
+
 export default route(function (/* { store, ssrContext } */) {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
@@ -35,5 +44,20 @@ export default route(function (/* { store, ssrContext } */) {
     //extendedRoutes: routes => setupLayouts(routes),
   });
 
+
+
+  Router.beforeEach((to, from, next: NavigationGuardNext) => {
+    console.log('beforeEach / to: ', to);
+    console.log('beforeEach / from: ', from);
+    const authStore = useAuthStore();
+    if (to.meta.requiresAuth && !authStore.isAuthenticated && to.name !== '/login') {
+      return next('/login');
+    } else {
+      next();
+    }
+  });
+
+
   return Router;
 });
+
